@@ -1,0 +1,19 @@
+[package]
+name = "icopng"
+version = "1.0.0"
+authors = ["Chris Down <chris@chrisdown.name>"]
+description = "Embed a PNG directly into an ICO file"
+homepage = "https://github.com/cdown/icopng"
+readme = "README.md"
+keywords = ["ico", "favicon", "web"]
+license = "Unlicense"
+edition = "2018"
+
+[dependencies]
+png = "0.17.2"
+anyhow = "1.0.52"
+
+[profile.release]
+lto = true
+codegen-units = 1
+debug = true
