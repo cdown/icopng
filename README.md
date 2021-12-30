@@ -3,6 +3,18 @@ alpha channel. This saves a lot of space, since PNGs can be compressed and
 there are tools to highly optimise them. Embedding PNG data inside a
 favicon.ico file is well supported by browsers, as well.
 
+Compared to using GIMP, ImageMagick, or ICOEncoder, the resulting file can be
+an order of magnitude smaller with an optimised input PNG due to avoiding
+re-encoding. For example, with [this](tests/data/favicon.png) input image,
+icopng's output is ~30% smaller than GIMP's re-encoded PNG, and ~900% smaller
+than traditional bitmap with alpha channel:
+
+| Engine           | Embedded format | Size   |
+|------------------|-----------------|--------|
+| icopng           | PNG             | 1.2KiB |
+| GIMP             | PNG             | 1.7KiB |
+| ImageMagick/GIMP | BMP             | 17KiB  |
+
 Here's an example of converting a traditional bitmap ico file to a PNG, and
 then into a PNG embedded into an ico file with this tool.
 
