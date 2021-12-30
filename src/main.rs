@@ -22,7 +22,7 @@ fn get_input_metadata(filename: &str) -> Result<PngMetadata> {
     let mut input = File::open(filename)?;
     let size = input.metadata()?.len();
     let mut png_data = vec![0; size as usize];
-    input.read(&mut png_data)?;
+    input.read_exact(&mut png_data)?;
     input.rewind()?;
 
     let decoder = png::Decoder::new(&input);
