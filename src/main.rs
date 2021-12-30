@@ -46,10 +46,12 @@ fn get_input_metadata(filename: &str) -> Result<PngMetadata> {
 fn get_ico_dimension(dim: u32) -> Result<u32> {
     if dim == 256 {
         Ok(0)
-    } else if dim == 0 {
-        bail!("Dimension is 0 but isn't ico encoded yet");
+    } else if dim == 0 || dim > 256 {
+        bail!(
+            "Input image has dimension {}, but ico files only support from 1-256",
+            dim
+        );
     } else {
-        // If it won't fit into a u8, we'll find out at try_from time
         Ok(dim)
     }
 }
