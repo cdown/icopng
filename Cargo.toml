@@ -12,6 +12,7 @@ edition = "2018"
 [dependencies]
 png = "0.17.2"
 anyhow = "1.0.52"
+byteorder = "1.0.0"
 
 [profile.release]
 lto = true
