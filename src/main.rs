@@ -3,7 +3,6 @@ use std::env;
 use std::fs::{File, OpenOptions};
 use std::io::prelude::*;
 use std::io::{Read, Write};
-use std::process::exit;
 
 use byteorder::{LittleEndian, WriteBytesExt};
 
@@ -83,14 +82,11 @@ fn write_ico(filename: &str, meta: &PngMetadata) -> Result<()> {
 
 fn main() -> Result<()> {
     let args: Vec<String> = env::args().collect();
+
     if args.len() != 3 {
-        eprintln!("Usage: {} [input] [output]", args[0]);
-        exit(1);
+        bail!("Usage: {} [input] [output]", args[0]);
     }
 
-    let input = &args[1];
-    let output = &args[2];
-
-    let meta = get_input_metadata(input)?;
-    write_ico(output, &meta).map_err(anyhow::Error::from)
+    let meta = get_input_metadata(&args[1])?;
+    write_ico(&args[2], &meta).map_err(anyhow::Error::from)
 }
