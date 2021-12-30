@@ -22,7 +22,7 @@ then into a PNG embedded into an ico file with this tool.
     convert favicon-old.ico favicon.png
 
     # Optional: Shrink the png further
-    pngquant -f --ext .png favicon.png
+    pngquant --skip-if-larger --strip -f --ext .png favicon.png
     optipng favicon.png
 
     # Embed into new favicon.ico
