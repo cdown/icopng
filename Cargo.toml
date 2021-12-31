@@ -7,7 +7,7 @@ homepage = "https://github.com/cdown/icopng"
 readme = "README.md"
 keywords = ["ico", "favicon", "web"]
 license = "Unlicense"
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 png = "0.17.2"
