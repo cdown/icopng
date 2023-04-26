@@ -1,6 +1,6 @@
 [package]
 name = "icopng"
-version = "1.0.0"
+version = "1.0.1"
 authors = ["Chris Down <chris@chrisdown.name>"]
 description = "Embed a PNG directly into an ICO file"
 homepage = "https://github.com/cdown/icopng"
