@@ -10,9 +10,9 @@ license = "Unlicense"
 edition = "2021"
 
 [dependencies]
-png = "0.17.2"
-anyhow = "1.0.52"
-byteorder = "1.0.0"
+png = "0.17.8"
+anyhow = "1.0.70"
+byteorder = "1.4.3"
 
 [profile.release]
 lto = true
