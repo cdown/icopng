@@ -11,7 +11,7 @@ edition = "2021"
 
 [dependencies]
 png = "0.17.8"
-anyhow = "1.0.70"
+anyhow = "1.0.71"
 byteorder = "1.4.3"
 
 [profile.release]
