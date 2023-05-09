@@ -58,25 +58,25 @@ fn get_ico_dimension(dim: u32) -> Result<u32> {
 
 // https://en.wikipedia.org/w/index.php?title=ICO_(file_format)&oldid=1048679157#Outline
 fn write_ico(filename: &str, meta: &PngMetadata) -> Result<()> {
-    let mut data: Vec<u8> = vec![];
-    data.write_u16::<LittleEndian>(0)?; // Reserved
-    data.write_u16::<LittleEndian>(1)?; // Type ICO
-    data.write_u16::<LittleEndian>(1)?; // 1 image
-    data.write_u8(meta.width)?;
-    data.write_u8(meta.height)?;
-    data.write_u8(0)?; // Colour palette
-    data.write_u8(0)?; // Reserved
-    data.write_u16::<LittleEndian>(1)?; // Colour planes
-    data.write_u16::<LittleEndian>(meta.depth)?;
-    data.write_u32::<LittleEndian>(meta.length)?;
-    data.write_u32::<LittleEndian>(data.len() as u32 + 4)?; // PNG offset
+    let mut ico_hdr: Vec<u8> = vec![];
+    ico_hdr.write_u16::<LittleEndian>(0)?; // Reserved
+    ico_hdr.write_u16::<LittleEndian>(1)?; // Type ICO
+    ico_hdr.write_u16::<LittleEndian>(1)?; // 1 image
+    ico_hdr.write_u8(meta.width)?;
+    ico_hdr.write_u8(meta.height)?;
+    ico_hdr.write_u8(0)?; // Colour palette
+    ico_hdr.write_u8(0)?; // Reserved
+    ico_hdr.write_u16::<LittleEndian>(1)?; // Colour planes
+    ico_hdr.write_u16::<LittleEndian>(meta.depth)?;
+    ico_hdr.write_u32::<LittleEndian>(meta.length)?;
+    ico_hdr.write_u32::<LittleEndian>(ico_hdr.len() as u32 + 4)?; // PNG offset
 
     let mut output = OpenOptions::new()
         .create(true)
         .write(true)
         .truncate(true)
         .open(filename)?;
-    output.write_all(&data)?;
+    output.write_all(&ico_hdr)?;
     output.write_all(&meta.data)?;
 
     Ok(())
