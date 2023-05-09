@@ -1,8 +1,7 @@
 use std::convert::TryFrom;
 use std::env;
 use std::fs::{File, OpenOptions};
-use std::io::prelude::*;
-use std::io::{Read, Write};
+use std::io::{Read, Seek, Write};
 
 use byteorder::{LittleEndian, WriteBytesExt};
 
