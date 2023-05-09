@@ -18,7 +18,7 @@ struct PngMetadata {
     data: Vec<u8>,
 }
 
-fn get_input_metadata(filename: &str) -> Result<PngMetadata> {
+fn get_png_metadata(filename: &str) -> Result<PngMetadata> {
     let mut input = File::open(filename)?;
     let size = input.metadata()?.len();
     let mut png_data = vec![0; size as usize];
@@ -89,6 +89,6 @@ fn main() -> Result<()> {
         bail!("Usage: {} [input] [output]", args[0]);
     }
 
-    let meta = get_input_metadata(&args[1])?;
+    let meta = get_png_metadata(&args[1])?;
     write_ico(&args[2], &meta).map_err(anyhow::Error::from)
 }
