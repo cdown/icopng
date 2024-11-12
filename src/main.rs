@@ -8,9 +8,10 @@ use byteorder::{LittleEndian, WriteBytesExt};
 
 const ICO_RESERVED: u8 = 0;
 const ICO_TYPE: u16 = 1;
-const ICO_NR_IMAGES: u16 = 1;
 const ICO_COLOUR_PLANES: u16 = 1;
 const ICO_COLOUR_PALETTE: u8 = 0;
+const ICO_HEADER_SIZE: usize = 6;
+const ICO_DIRECTORY_ENTRY_SIZE: usize = 16;
 const MAX_ICO_DIMENSION: u32 = 256;
 
 // All of these are sized based on valid ico output, not png input
@@ -62,19 +63,25 @@ fn get_ico_dimension(dim: u32) -> Result<u32> {
 }
 
 // https://en.wikipedia.org/w/index.php?title=ICO_(file_format)&oldid=1048679157#Outline
-fn write_ico(filename: &str, meta: &PngMetadata) -> Result<()> {
+fn write_ico(filename: &str, metas: &[PngMetadata]) -> Result<()> {
     let mut ico_hdr: Vec<u8> = vec![];
     ico_hdr.write_u16::<LittleEndian>(ICO_RESERVED.into())?;
     ico_hdr.write_u16::<LittleEndian>(ICO_TYPE)?;
-    ico_hdr.write_u16::<LittleEndian>(ICO_NR_IMAGES)?;
-    ico_hdr.write_u8(meta.width)?;
-    ico_hdr.write_u8(meta.height)?;
-    ico_hdr.write_u8(ICO_COLOUR_PALETTE)?;
-    ico_hdr.write_u8(ICO_RESERVED)?;
-    ico_hdr.write_u16::<LittleEndian>(ICO_COLOUR_PLANES)?;
-    ico_hdr.write_u16::<LittleEndian>(meta.depth)?;
-    ico_hdr.write_u32::<LittleEndian>(meta.length)?;
-    ico_hdr.write_u32::<LittleEndian>(ico_hdr.len() as u32 + 4)?; // PNG offset
+    ico_hdr.write_u16::<LittleEndian>(metas.len() as u16)?;
+
+    let mut image_offset = (ICO_HEADER_SIZE + (ICO_DIRECTORY_ENTRY_SIZE * metas.len())) as u32;
+
+    for meta in metas {
+        ico_hdr.write_u8(meta.width)?;
+        ico_hdr.write_u8(meta.height)?;
+        ico_hdr.write_u8(ICO_COLOUR_PALETTE)?;
+        ico_hdr.write_u8(ICO_RESERVED)?;
+        ico_hdr.write_u16::<LittleEndian>(ICO_COLOUR_PLANES)?;
+        ico_hdr.write_u16::<LittleEndian>(meta.depth)?;
+        ico_hdr.write_u32::<LittleEndian>(meta.length)?;
+        ico_hdr.write_u32::<LittleEndian>(image_offset)?;
+        image_offset += meta.length;
+    }
 
     let mut output = OpenOptions::new()
         .create(true)
@@ -82,7 +89,10 @@ fn write_ico(filename: &str, meta: &PngMetadata) -> Result<()> {
         .truncate(true)
         .open(filename)?;
     output.write_all(&ico_hdr)?;
-    output.write_all(&meta.data)?;
+
+    for meta in metas {
+        output.write_all(&meta.data)?;
+    }
 
     Ok(())
 }
@@ -90,10 +100,20 @@ fn write_ico(filename: &str, meta: &PngMetadata) -> Result<()> {
 fn main() -> Result<()> {
     let args: Vec<String> = env::args().collect();
 
-    if args.len() != 3 {
-        bail!("Usage: {} [input] [output]", args[0]);
+    if args.len() < 3 {
+        bail!(
+            "Usage: {} [input1.png] [input2.png] ... [output.ico]",
+            args[0]
+        );
     }
 
-    let meta = get_png_metadata(&args[1])?;
-    write_ico(&args[2], &meta).map_err(anyhow::Error::from)
+    let input_filenames = &args[1..args.len() - 1];
+    let output_filename = &args[args.len() - 1];
+
+    let metas = input_filenames
+        .iter()
+        .map(|file| get_png_metadata(file))
+        .collect::<Result<Vec<_>>>()?;
+
+    write_ico(output_filename, &metas).map_err(anyhow::Error::from)
 }
