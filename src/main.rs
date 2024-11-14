@@ -3,9 +3,8 @@ use std::env;
 use std::fs::{File, OpenOptions};
 use std::io::{Read, Seek, Write};
 
-use byteorder::{LittleEndian, WriteBytesExt};
-
 use anyhow::{bail, Result};
+use byteorder::{LittleEndian, WriteBytesExt};
 
 const ICO_RESERVED: u8 = 0;
 const ICO_TYPE: u16 = 1;
